@@ -20,6 +20,7 @@ jobs:
         run: |
           base=${GITHUB_REF}
           author_pr=${{ github.event.pull_request.user.login }}
+          reviewer_pr=${{ github.event.pull_request.merged_by.login }}
 
           if [[ "$base" == release_candidate ]]
           then
@@ -46,7 +47,7 @@ jobs:
             gh pr comment "$PR" --body "@$author_pr $(echo "$body"; echo '```'; cat $merge_output; echo '```')" 
           else
             git push origin "${temp_branch}:${temp_branch}"
-            gh pr create --title "Merge $base down to $target" --body "Automerge action generating PR for last merge by @$author_pr" --base "$target"
+            gh pr create --title "Merge $base down to $target" --body "Automerge action generating PR for last merge by @$author_pr" --base "$target" --reviewer "@$reviewer_pr"
           fi
 
 
